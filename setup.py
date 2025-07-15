@@ -1,4 +1,5 @@
 import numpy as np
+import re
 import os.path as osp
 from setuptools import setup, find_packages
 from distutils.extension import Extension
@@ -11,11 +12,17 @@ def readme():
     return content
 
 
+
+
 def find_version():
     version_file = 'torchreid/__init__.py'
+    version_pattern = r"^__version__\s*=\s*['\"]([^'\"]+)['\"]"
     with open(version_file, 'r') as f:
-        exec(compile(f.read(), version_file, 'exec'))
-    return locals()['__version__']
+        for line in f:
+            match = re.match(version_pattern, line)
+            if match:
+                return match.group(1)
+    raise RuntimeError("Unable to find __version__ in torchreid/__init__.py")
 
 
 def numpy_include():
